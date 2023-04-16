@@ -13,7 +13,6 @@ import (
 	"github.com/otiai10/gosseract/v2"
 	"github.com/sashabaranov/go-openai"
 	"github.com/sirupsen/logrus"
-	//	"google.golang.org/api/vision/v1"
 )
 
 var (
@@ -61,61 +60,6 @@ func main() {
 			logrus.Debugf(" - %v [%v]: %+v", model.Object, model.ID, model.Root)
 		}
 	}
-
-	// Replace YOUR_PROJECT_ID with your Google Cloud project ID
-	// ctx := context.Background()
-	/*creds, err := google.FindDefaultCredentials(ctx, vision.CloudPlatformScope)
-	  if err != nil {
-	  	logrus.Fatalf("FindDefaultCredentials error: %v", err)
-	  }
-	  conf := &jwt.Config{
-	  	Email:      creds.JSON["client_email"].(string),
-	  	PrivateKey: creds.JSON["private_key"].([]byte),
-	  	Scopes: []string{
-	  		vision.CloudPlatformScope,
-	  	},
-	  	TokenURL: google.JWTTokenURL,
-	  }
-	  gclient, err := vision.New(conf.Client(ctx))
-	  if err != nil {
-	  	logrus.Fatalf("vision.New error: %v", err)
-	  }*/
-
-	// detectText gets text from the Vision API for an image at the given file path.
-	/*detectText := func(file string) (string, error) {
-		client, err := vision.NewImageAnnotatorClient(ctx)
-		if err != nil {
-			return "", err
-		}
-
-		f, err := os.Open(file)
-		if err != nil {
-			return "", err
-		}
-		defer f.Close()
-
-		image, err := vision.NewImageFromReader(f)
-		if err != nil {
-			return "", err
-		}
-		annotations, err := client.DetectTexts(ctx, image, nil, 10)
-		if err != nil {
-			return "", err
-		}
-
-		if len(annotations) == 0 {
-			logrus.Debugf("No text found.")
-		} else {
-			var buf bytes.Buffer
-			logrus.Debugf("found %d annotations in image", len(annotations))
-			for _, annotation := range annotations {
-				fmt.Fprintf(&buf, "%q\n", annotation.Description)
-			}
-			return buf.String(), nil
-		}
-
-		return "", nil
-	}*/
 
 	// Set up updates channel to receive incoming messages from the user
 	updates := bot.GetUpdatesChan(tgbotapi.UpdateConfig{
@@ -211,20 +155,6 @@ func main() {
 			}
 		}
 
-		// log.Printf("user message: %v", update.Message.Text)
-
-		// Use the OpenAI API to generate a response to the user's message
-		/*response, err := openaiClient.Completions.Create(
-		      &openai.CompletionRequest{
-		          Model:     "YOUR_OPENAI_MODEL_NAME",
-		          Prompt:    update.Message.Text,
-		          MaxTokens: 50,
-		      },
-		  )
-		  if err != nil {
-		      log.Panic(err)
-		  }*/
-
 		logrus.Debugf("sending chat completion request to OpenAI: %s", msgTxt)
 
 		t0 := time.Now()
@@ -314,43 +244,6 @@ func allowedUsername(name string) bool {
 }
 
 func detectText(file string) (string, error) {
-	// ctx := context.Background()
-	// ctx, cancel := context.WithCancel(ctx)
-	// defer cancel()
-
-	/*client, err := vision.NewImageAnnotatorClient(ctx, option.WithCredentialsFile("/home/ondrej/.config/gcloud/vision.json"))
-	  if err != nil {
-	  	return "", err
-	  }
-	  defer client.Close()
-
-	  f, err := os.Open(file)
-	  if err != nil {
-	  	return "", err
-	  }
-	  defer f.Close()
-
-	  image, err := vision.NewImageFromReader(f)
-	  if err != nil {
-	  	return "", err
-	  }
-	  annotations, err := client.DetectTexts(ctx, image, nil, 10)
-	  if err != nil {
-	  	return "", err
-	  }
-
-	  if len(annotations) == 0 {
-	  	logrus.Debugf("No text found.")
-	  } else {
-	  	var buf bytes.Buffer
-	  	logrus.Debugf("found %d annotations in image", len(annotations))
-	  	for _, annotation := range annotations {
-	  		fmt.Fprintf(&buf, "%q\n", annotation.Description)
-	  	}
-
-	  	return buf.String(), nil
-	  }*/
-
 	client := gosseract.NewClient()
 	defer client.Close()
 
