@@ -16,19 +16,33 @@ import (
 )
 
 var (
-	openAiApiKey   = os.Getenv("YOUR_OPENAI_API_KEY")
-	telegramApiKey = os.Getenv("YOUR_TELEGRAM_BOT_API_TOKEN")
+	openAiApiKey   = os.Getenv("FBOT_OPENAI_API_KEY")
+	telegramApiKey = os.Getenv("FBOT_TELEGRAM_BOT_API_TOKEN")
 )
 
-func init() {
-	logrus.SetLevel(logrus.TraceLevel)
+type Config struct {
+	OpenAI struct {
+		ApiKey string
+	}
+	Telegram struct {
+		BotApiToken string
+	}
 }
 
-func main() {
+func init() {
+	logrus.SetLevel(logrus.InfoLevel)
+}
+
+func runBot() error {
 	ctx := context.Background()
 
+	cfg, err := loadConfig()
+	if err != nil {
+		return fmt.Errorf("load config error: %w", err)
+	}
+
 	// Create a new Telegram bot using the provided API token
-	bot, err := tgbotapi.NewBotAPI(telegramApiKey)
+	bot, err := tgbotapi.NewBotAPI(cfg.Telegram.BotApiToken)
 	if err != nil {
 		logrus.Fatalf("Telegram bot error: %v", err)
 	} else {
@@ -49,15 +63,15 @@ func main() {
 	}
 
 	// Create a new OpenAI client using the provided API key
-	client := openai.NewClient(openAiApiKey)
+	client := openai.NewClient(cfg.OpenAI.ApiKey)
 
 	listResp, err := client.ListModels(ctx)
 	if err != nil {
 		logrus.Fatalf("OpenAI client error: %v", err)
 	} else {
-		logrus.Infof("OpenAI client active, listing %d models:", len(listResp.Models))
+		logrus.Infof("OpenAI client active, has %d models available", len(listResp.Models))
 		for _, model := range listResp.Models {
-			logrus.Debugf(" - %v [%v]: %+v", model.Object, model.ID, model.Root)
+			logrus.Tracef(" - %v [%v]: %+v", model.Object, model.ID, model.Root)
 		}
 	}
 
@@ -193,6 +207,36 @@ func main() {
 		}
 
 		log.Println("waiting for next Telegram update..")
+	}
+
+	return nil
+}
+
+func loadConfig() (*Config, error) {
+	cfg := &Config{
+		OpenAI: struct {
+			ApiKey string
+		}{
+			ApiKey: openAiApiKey,
+		},
+		Telegram: struct {
+			BotApiToken string
+		}{
+			BotApiToken: telegramApiKey,
+		},
+	}
+	if cfg.OpenAI.ApiKey == "" {
+		return nil, fmt.Errorf("openAI API key is required")
+	}
+	if cfg.Telegram.BotApiToken == "" {
+		return nil, fmt.Errorf("telegram bot API token is required")
+	}
+	return cfg, nil
+}
+
+func main() {
+	if err := runBot(); err != nil {
+		logrus.Fatalln("ERROR: %v", err)
 	}
 }
 

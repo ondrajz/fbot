@@ -13,12 +13,15 @@ FBot is our family assistant chatbot.
 
 ## Quick Start
 
+First, configure auth info:
 
 ```sh
-# Set API keys
-export TELEGRAM_API_KEY="<TELEGRAM_API_KEY>"
-export OPENAI_API_KEY="<OPENAI_API_KEY>"
+export FBOT_TELEGRAM_BOT_API_TOKEN="<TELEGRAM_BOT_API_TOKEN>"
+export FBOT_OPENAI_API_KEY="<OPENAI_API_KEY>"
+```
 
-# Run
-go run .
+To start bot, run:
+
+```sh
+go run ./cmd/fbot
 ```
