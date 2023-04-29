@@ -1,27 +1,28 @@
-Fbot
+FBot
 ====
 
-FBot is our family assistant chatbot.
+FBot is our assistant chatbot.
 
 ## Features
-
-- uses Telegram API for interacting with users
-- uses OpenAI API for prompting models
 
 - can convert screenshots containing a date into URL to create event in Google Calendar
 - can pass prompts and responses between user and GPT models  
 
+## Third-Party Dependencies
+
+- Telegram BotAPI for user interaction
+- OpenAI API for AI capabilities
+- Gosseract for text detection in images
+
 ## Quick Start
 
-First, configure auth info:
+Setup authentication:
 
 ```sh
+# Setup authentication 
 export FBOT_TELEGRAM_BOT_API_TOKEN="<TELEGRAM_BOT_API_TOKEN>"
 export FBOT_OPENAI_API_KEY="<OPENAI_API_KEY>"
-```
 
-To start bot, run:
-
-```sh
+# Install & Run
 go run ./cmd/fbot
 ```

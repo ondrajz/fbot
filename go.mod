@@ -7,6 +7,7 @@ require (
 	github.com/otiai10/gosseract/v2 v2.4.0
 	github.com/sashabaranov/go-openai v1.5.8
 	github.com/sirupsen/logrus v1.9.0
+	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (
